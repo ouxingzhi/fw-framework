@@ -1,14 +1,11 @@
 <?php
 
-
-
-
-	
-
 include_once './src/bootstrap.php';
 
+use Core\Application;
+
 try{
-new Core\Application();
+	new Application();
 }catch(Exception $e){
 	echo $e;
 }
