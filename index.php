@@ -2,7 +2,7 @@
 
 include_once './src/bootstrap.php';
 
-use Core\Application;
+use Fw\Core\Application;
 
 try{
 	new Application();

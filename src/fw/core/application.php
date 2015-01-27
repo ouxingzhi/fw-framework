@@ -1,5 +1,5 @@
 <?php
-namespace Core;
+namespace Fw\Core;
 
 class Application{
 	public function __construct(){
@@ -7,5 +7,8 @@ class Application{
 	}
 	public function __destruct(){
 
+	}
+	public function run(){
+		
 	}
 }

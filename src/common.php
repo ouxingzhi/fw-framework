@@ -13,21 +13,16 @@
 		}
 		public static function addIncludePath($path){
 			$realpath = realpath($path);
-			if(array_search($realpath,self::$includepaths) !== false){
+			if(array_search($realpath,self::$includePaths) === false){
 				if(file_exists($realpath)){
 					set_include_path($realpath);
+					self::$includePaths[] = $realpath;
 				}else{
 					throw new Execption("\"$realpath\" is not exist");
 				}
 			}
 		}
-		public static function existFileInIncludePath($file){
-			
-		}
 	}
 
 	spl_autoload_register('LoadClass::autoload');
 
-	function import($class){
-
-	}
