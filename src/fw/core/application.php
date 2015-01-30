@@ -1,6 +1,8 @@
 <?php
 namespace Fw\Core;
 
+use Fw\Config\Config;
+
 class Application{
 
 	const CONTROLLER_PATH = 'controllers';
