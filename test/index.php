@@ -1,4 +1,7 @@
 <?php
 
-print_r($_SERVER);
+function A($a,$b){
 
+}
+
+A(1);
