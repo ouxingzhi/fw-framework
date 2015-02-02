@@ -6,6 +6,7 @@ use Fw\Utils\UrlMapping;
 use Fw\Utils\UrlParseFactory;
 use Fw\Exception\NotDefinedMethodException;
 use Fw\Exception\NotFoundControllerException;
+use Fw\Exception\NotExtendControllerException;
 
 class Application{
 
@@ -81,17 +82,17 @@ class Application{
 	}
 	private function delegate($urlParse){
 		$controller = $urlParse->getController();
-		$action = $urlParse->getAction() . 'Action';
+		$action = $urlParse->getAction();
 
 		try{
 			$controllerObject = $this->loadController($controller);
-			if(method_exists($controllerObject,$action)){
-				$paths = $urlParse->getParam();
-				$paths = $paths['paths'];
-				array_splice($paths,0,2);
-				call_user_func_array(array($controllerObject,$action),$paths);
+			if(method_exists($controllerObject,'trriger')){
+				$params = $urlParse->getParam();
+				
+				$controllerObject->trriger($acton,$controller,$params);
+				
 			}else{
-				throw new NotDefinedMethodException($action);
+				throw new NotExtendControllerException($controller);
 			}
 		}catch(NotFoundControllerException $e){
 			
@@ -110,7 +111,7 @@ class Application{
 		}else{
 			throw new NotFoundControllerException($controller);
 		}
-		return new $controller;
+		return new $controller($this);
 	}
 	private function loadConfig($file){
 		if(file_exists($file)){
@@ -121,5 +122,8 @@ class Application{
 	}
 	private function getApplicationConfig(){
 		return $this->loadConfig($this->configsPath . self::CFGFILE_APPLICATION);
+	}
+	public function getViewPath(){
+		return $this->viewsPath;
 	}
 }
