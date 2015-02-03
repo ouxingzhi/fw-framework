@@ -17,18 +17,19 @@ class Controller{
 
 	private $view = null;
 	public function trigger($action,$controller,$params){
-		$this->view = new View($this->$app->getViewPath());
-		$method = $action . SUFFIX;
+		$this->view = new View($this->app->getViewPath());
+		$method = $action . self::SUFFIX;
 
 		$paths = $params['paths'];
 		array_splice($paths,0,2);
 		if(method_exists($this,$method)){
-			$viewName = call_user_func_array(array($this,$action),$paths);
+			$viewName = call_user_func_array(array($this,$method),$paths);
 			if(empty($viewName)){
 				$viewName = $controller . '_' .$action;
 			}
+			$this->view->write($viewName);
 		}else{
-			throws new NotDefinedMethodException($method);
+			throw new NotDefinedMethodException($method);
 		}
 	}
 

@@ -10,5 +10,11 @@ class A{
 	}
 }
 
+class B extends A{
 
-$a = new A();
+}
+
+
+$b = new B();
+
+var_dump($b instanceof A);

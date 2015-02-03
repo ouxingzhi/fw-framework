@@ -2,25 +2,18 @@
 
 namespace Fw\Core;
 
+use Fw\Core\Template;
 use Fw\Exception\NotFoundViewFileException;
 
 class View{
-	private $__path__;
-	public function __construct($path){
-		$this->__path__ = $path;
+	private $template;
+	public function __construct($viewpath){
+		$this->template = new Template($viewpath);
 	}
 	public function assign($key,$val){
-		$this->$key = $val;
+		$this->template->assign($key,$val);
 	}
-	public function isset($key){
-		return isset($this->$key);
-	}
-
-	public function include($file){
-		if(file_exists($this->__path__ . $file)){
-			include($this->__path__ . $file);
-		}else{
-			throws new NotFoundViewFileException($file);
-		}
+	public function write($file){
+		$this->template->insert($file);
 	}
 }

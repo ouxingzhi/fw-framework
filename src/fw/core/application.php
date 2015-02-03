@@ -3,6 +3,7 @@ namespace Fw\Core;
 
 
 use Fw\Utils\UrlMapping;
+use Fw\Core\Controller;
 use Fw\Utils\UrlParseFactory;
 use Fw\Exception\NotDefinedMethodException;
 use Fw\Exception\NotFoundControllerException;
@@ -86,11 +87,9 @@ class Application{
 
 		try{
 			$controllerObject = $this->loadController($controller);
-			if(method_exists($controllerObject,'trriger')){
+			if($controllerObject instanceof Controller){
 				$params = $urlParse->getParam();
-				
-				$controllerObject->trriger($acton,$controller,$params);
-				
+				$controllerObject->trigger($action,$controller,$params);
 			}else{
 				throw new NotExtendControllerException($controller);
 			}
