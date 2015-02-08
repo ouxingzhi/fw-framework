@@ -1,20 +1,13 @@
 <?php
 
+$link = mysql_connect('localhost','root','422302');
+
+mysql_select_db('message',$link);
+
+var_dump(mysql_query('insert into message set title="ouxingzhi",user="dieieiieieiei"'));
 
 
-
-class A{
-	public $t = "sss";
-	public function name(){
-
-	}
-}
-
-class B extends A{
-
-}
-
-
-$b = new B();
-
-var_dump($b instanceof A);
+array(
+	"TITLE"=>'OUXINGZHI',
+	"@OR"=>
+	);

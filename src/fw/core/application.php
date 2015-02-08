@@ -43,7 +43,6 @@ class Application{
 		$this->buildPaths();
 
 		$this->config = $this->getApplicationConfig();
-
 		$this->urlMapping = $this->getUrlMapping();
 
 		$this->checkOptions();
@@ -101,7 +100,7 @@ class Application{
 
 	}
 	private function getUrlMapping(){
-		$umconfig = $this->loadConfig($this->configsPath . self::CFGFILE_URL_MAPPING);
+		$umconfig = $this->loadConfig(self::CFGFILE_URL_MAPPING);
 		return new UrlMapping($umconfig);
 	}
 	private function loadController($controller){
@@ -113,14 +112,16 @@ class Application{
 		return new $controller($this);
 	}
 	private function loadConfig($file){
-		if(file_exists($file)){
-			return include($file);
+
+		$fullfile = $this->configsPath . $file;
+		if(file_exists($fullfile)){
+			return include($fullfile);
 		}else{
 			return array();
 		}
 	}
 	private function getApplicationConfig(){
-		return $this->loadConfig($this->configsPath . self::CFGFILE_APPLICATION);
+		return $this->loadConfig(self::CFGFILE_APPLICATION);
 	}
 	public function getViewPath(){
 		return $this->viewsPath;
