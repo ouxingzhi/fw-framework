@@ -16,7 +16,11 @@ class SqlBuild{
 		if(is_array($fields)){
 			$strval = array();
 			foreach($fields as $key=>$val){
-				$strval[] = "`$val`";
+				if($val !== '*'){
+					$strval[] = "`$val`";
+				}else{
+					$strval[] = $val;
+				}
 			}
 			$fields = implode(',',$strval);
 		}

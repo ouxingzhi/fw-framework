@@ -10,7 +10,18 @@ class Index extends Controller{
 
 		$index->set('TITLE','tidieidiiee');
 		$index->set('USER','ouxingzhi');
-		var_dump($index->save());
+
+		var_dump($index->update(array(
+			'id'=>3,
+			'and',
+			array(
+				'ed'=>'sdsd',
+				'or',
+				'ss'=>'sdsd'
+			)
+
+		)));
+		
 		return 'index';
 	}
 }

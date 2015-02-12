@@ -1,13 +1,11 @@
 <?php
 
-$link = mysql_connect('localhost','root','422302');
+$arr = array(
+	'title'=>"title",
+	'or',
+	array(
+		'title'=>'aaa'
+	)
+);
 
-mysql_select_db('message',$link);
-
-var_dump(mysql_query('insert into message set title="ouxingzhi",user="dieieiieieiei"'));
-
-
-array(
-	"TITLE"=>'OUXINGZHI',
-	"@OR"=>
-	);
+var_dump($arr);

@@ -53,13 +53,45 @@ abstract class Model{
 		return $this;
 	}
 	public function update($where=array()){
+		$sql = new SqlBuild();
+		$sql->update($this->getTable())
+			->values($this->buildSqlValuesSetString())
+			->where(static::buildSqlConds($where));
+		$this->last_sql = $sql->build();
 
+		
+		$db = $this->getDbSession();
+
+		$db->query($this->last_sql);
+		$id = $db->getLastInsertId();
+		$pk = $this->getPK();
+		$this->data[$pk ? $pk : 'id'] = $id;
+		return $this;
 	}
-	public function delete(){
+	public function delete($where=array()){
+		$sql = new SqlBuild();
+		$sql->delete($this->getTable())
+			->where(static::buildSqlConds($where));
+		$this->last_sql = $sql->build();
+		
+		$db = $this->getDbSession();
 
+		$db->query($this->last_sql);
+		return $this;
 	}
-	public function find(){
+	public function find($fields=array('*'),$where=array(),$order=""){
+		$sql = new SqlBuild();
+		$sql->select($fields)
+			->from($this->getTable())
+			->where(static::buildSqlConds($where));
+		if($order){
+			$sql->order($order);
+		}
+		$this->last_sql = $sql->build();
+		
+		$db = $this->getDbSession();
 
+		$db->query($this->last_sql);
 	}
 	public function set($name,$value){
 		$fields = $this->getFields();
@@ -117,23 +149,20 @@ abstract class Model{
 		return implode(',',$values);
 	}
 
-	private static function buildSqlConds($where){
-		$builds = [];
-		foreach($where as $key=$val){
-			if(strpos('@',$key) === 0){
-				$key = strtolower($key);
-				switch($key){
-					case '@OR':
-
-						break;
-					case '@AND':
-
-						break;
+	public static function buildSqlConds($where){
+		$builds = array();
+		foreach($where as $key=>$val){
+			if(is_numeric($key)){
+				if(is_string($val) and preg_match("/^or|and$/i",$val)){
+					$builds[] = strtoupper($val);
+				}else if(is_array($val)){
+					$builds[] = '(' . static::buildSqlConds($val) . ')';
 				}
 			}else{
 				$builds[] = "`$key`=\"$val\"";
 			}
 		}
+		return implode(' ',$builds); 
 	}
 	private static function buildSqlValue($field,$value,$type){
 
