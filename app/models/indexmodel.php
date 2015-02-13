@@ -2,12 +2,9 @@
 
 namespace Models;
 
-use Fw\Core\Model;
+use Fw\Model\Mysql;
 
-class IndexModel extends Model{
-	public function getDbSession(){
-
-	}
+class IndexModel extends Mysql{
 	/**
 	 * get table schema
 	 * @return {array}

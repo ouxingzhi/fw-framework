@@ -1,12 +1,16 @@
 <?php
-	class Config{
-		public function __construct(){
 
-		}
-		public function get(){
+namespace Fw\Config;
 
-		}
-		public function set(){
-			
-		}
+use Fw\Utils\ArrayUtils;
+
+class Config{
+	private static $config = array();
+	public static function get($path){
+		return ArrayUtils::getPath(static::$config,$path);
 	}
+
+	public static function setConfig($config){
+		static::$config = $config;
+	}
+}

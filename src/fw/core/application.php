@@ -8,6 +8,7 @@ use Fw\Utils\UrlParseFactory;
 use Fw\Exception\NotDefinedMethodException;
 use Fw\Exception\NotFoundControllerException;
 use Fw\Exception\NotExtendControllerException;
+use Fw\Config\Config;
 
 class Application{
 
@@ -43,6 +44,7 @@ class Application{
 		$this->buildPaths();
 
 		$this->config = $this->getApplicationConfig();
+		Config::setConfig($this->config);
 		$this->urlMapping = $this->getUrlMapping();
 
 		$this->checkOptions();

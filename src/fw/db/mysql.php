@@ -58,8 +58,8 @@ class Mysql implements SessionInterface{
 		}else{
 			throw new ParamNotExsistException('database.user');
 		}
-		if(isset($options['passward'])){
-			$this->passward = $options['passward'];
+		if(isset($options['password'])){
+			$this->password = $options['password'];
 		}
 		if(isset($options['database'])){
 			$this->database = $options['database'];
@@ -71,7 +71,7 @@ class Mysql implements SessionInterface{
 	public function open(){
 		if($this->state === static::STATE_CONNECT) return $this;
 
-		$this->link = mysql_connect($this->host . ($this->port ? ':' . $this->port : ''),$this->user,$this->passward,true);
+		$this->link = mysql_connect($this->host . ($this->port ? ':' . $this->port : ''),$this->user,$this->password,true);
 		if($this->link === false){
 			throw new FwException(mysql_error(),3389);
 		}
@@ -111,7 +111,7 @@ class Mysql implements SessionInterface{
 		}
 		return $result;
 	}
-	pubic function getLastInsertId(){
+	public function getLastInsertId(){
 		return mysql_insert_id();
 	}
 	public static function getInstance($options){

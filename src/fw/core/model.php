@@ -79,19 +79,21 @@ abstract class Model{
 		$db->query($this->last_sql);
 		return $this;
 	}
-	public function find($fields=array('*'),$where=array(),$order=""){
+	public function find($fields=array(),$where=array(),$order=""){
 		$sql = new SqlBuild();
 		$sql->select($fields)
-			->from($this->getTable())
-			->where(static::buildSqlConds($where));
+			->from($this->getTable());
+		if(!empty($where)){
+			$sql->where(static::buildSqlConds($where));
+		}
+
 		if($order){
 			$sql->order($order);
 		}
 		$this->last_sql = $sql->build();
-		
 		$db = $this->getDbSession();
 
-		$db->query($this->last_sql);
+		return $db->query($this->last_sql);
 	}
 	public function set($name,$value){
 		$fields = $this->getFields();

@@ -11,20 +11,13 @@ class SqlBuild{
 		$this->builds = array();
 		return $this;
 	}
-	public function select($fields="*"){
+	public function select($fields){
 		$this->clean();
-		if(is_array($fields)){
-			$strval = array();
-			foreach($fields as $key=>$val){
-				if($val !== '*'){
-					$strval[] = "`$val`";
-				}else{
-					$strval[] = $val;
-				}
-			}
-			$fields = implode(',',$strval);
+		$fieldsstr = '*';
+		if(is_array($fields) and !empty($fileds)){
+			$fieldsstr = implode(',',$fields);
 		}
-		$this->builds[] = "SELECT " . $fields;
+		$this->builds[] = "SELECT " . $fieldsstr;
 		return $this;
 	}
 	public function from($from){
