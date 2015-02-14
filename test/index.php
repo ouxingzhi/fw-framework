@@ -1,11 +1,5 @@
 <?php
 
-$arr = array(
-	'title'=>"title",
-	'or',
-	array(
-		'title'=>'aaa'
-	)
-);
+include_once '../src/bootstrap.php';
 
-var_dump($arr);
+use 
