@@ -10,6 +10,10 @@ use Fw\Exception\NotFoundControllerException;
 use Fw\Exception\NotExtendControllerException;
 use Fw\Config\Config;
 
+/**
+ * Application类
+ * 表示一个应用程序，主要用于分发请求，控制流程。
+ */
 class Application{
 
 	const CONTROLLER_PATH = 'controllers';

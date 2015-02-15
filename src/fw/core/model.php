@@ -3,6 +3,9 @@
 namespace Fw\Core;
 
 use Fw\Db\SqlBuild;
+/**
+ * Model基类
+ */
 
 abstract class Model{
 

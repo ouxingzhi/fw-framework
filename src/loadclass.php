@@ -1,5 +1,7 @@
 <?php
-
+    /**
+     * 类自动加载器
+     */
 	class LoadClass{
 		const SUFFIX = '.php';
 		
@@ -23,6 +25,6 @@
 			}
 		}
 	}
-
+    //注册当类未定义时的处理方法
 	spl_autoload_register('LoadClass::autoload');
 
