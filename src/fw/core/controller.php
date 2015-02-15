@@ -4,7 +4,9 @@ namespace Fw\Core;
 
 use Fw\Core\View;
 use Fw\Exception\NotDefinedMethodException;
-
+/**
+ * Controller基类
+ */
 class Controller{
 
 	private $app;

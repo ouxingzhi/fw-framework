@@ -1,7 +1,10 @@
 <?php
 
 namespace Fw\Core;
-
+/**
+ * Template基类
+ * 提供模板内的方法
+ */
 class Template{
 
 	const FILE_SUFFIX = '.php';
