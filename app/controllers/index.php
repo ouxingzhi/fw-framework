@@ -7,14 +7,9 @@ use Fw\Utils\ArrayUtils;
 
 class Index extends Controller{
 	public function indexAction($p1=0,$p2=0){
-		$index = new IndexModel();
-
-		$index->set('TITLE','tidieidiiee');
-		$index->set('USER','ouxingzhi');
-
-		var_dump($index->find());
-		
-		
-		return 'index';
+	
+		return array(
+            'layout'=>'layout2.php'
+        );
 	}
 }

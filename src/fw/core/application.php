@@ -1,7 +1,6 @@
 <?php
 namespace Fw\Core;
 
-
 use Fw\Utils\UrlMapping;
 use Fw\Core\Controller;
 use Fw\Utils\UrlParseFactory;
@@ -18,15 +17,11 @@ class Application{
 
 	const CONTROLLER_PATH = 'controllers';
 
-	const MODEL_PATH = 'models';
-
 	const VIEW_PATH = 'views';
+    
+    const LAYOUT_PATH = 'layouts';
 
-	const CONFIG_PATH = 'configs';
-
-	const CFGFILE_APPLICATION = 'application.php';
-
-	const CFGFILE_URL_MAPPING = 'urlmapping.php';
+    const CFGKEY_MAPPING = 'urlmapping';
 
 	private $config;
 
@@ -36,38 +31,59 @@ class Application{
 
 	private $controllersPath;
 
-	private $modelsPath;
-
 	private $viewsPath;
+    
+    private $layoutPath;
+    
+    private $defaultController = 'index';
+    
+    private $defaultAction = 'index';
 
 	private $configsPath;
+    
 
-	public function __construct($options){
-		$this->setOption($options);
-
-		$this->buildPaths();
-
-		$this->config = $this->getApplicationConfig();
+	public function __construct($config){
+		$this->setOption($config);
+		$this->config = $config;
 		Config::setConfig($this->config);
-		$this->urlMapping = $this->getUrlMapping();
+        $umconfig = Config::get(static::CFGKEY_MAPPING) or array();
+		$this->urlMapping = new UrlMapping($umconfig);
 
 		$this->checkOptions();
 	}
-	private function buildPaths(){
-		$this->controllersPath = $this->applicationPath . DIRECTORY_SEPARATOR . self::CONTROLLER_PATH .DIRECTORY_SEPARATOR;
-		$this->modelsPath = $this->applicationPath . DIRECTORY_SEPARATOR . self::MODEL_PATH .DIRECTORY_SEPARATOR;
-		$this->viewsPath = $this->applicationPath . DIRECTORY_SEPARATOR . self::VIEW_PATH .DIRECTORY_SEPARATOR;
-		$this->configsPath = $this->applicationPath . DIRECTORY_SEPARATOR . self::CONFIG_PATH .DIRECTORY_SEPARATOR;
-	}
-	public function setOption($options){
-		if(isset($options["applicationPath"])){
-			$this->applicationPath = realpath($options["applicationPath"]) ;
+	public function setOption($config){
+		if(isset($config["applicationPath"])){
+			$this->applicationPath = realpath($config["applicationPath"]) ;
 		}
-	}
-	private function checkOptions(){
-		if(!$this->applicationPath){
+        if(!$this->applicationPath){
 			throw new Exceptoin("not set 'applicationPath'");
 		}
+        if(isset($config["controllersPath"])){
+			$this->controllersPath = realpath($config["controllersPath"]) ;
+		}else{
+            $this->controllersPath = $this->applicationPath . DIRECTORY_SEPARATOR . self::CONTROLLER_PATH .DIRECTORY_SEPARATOR;
+        }
+        if(isset($config["viewsPath"])){
+			$this->viewsPath = realpath($config["viewsPath"]) ;
+		}else{
+            $this->viewsPath = $this->applicationPath . DIRECTORY_SEPARATOR . self::VIEW_PATH .DIRECTORY_SEPARATOR;
+        }
+        if(isset($config["layoutPath"])){
+			$this->layoutPath = realpath($config["layoutPath"]) ;
+		}else{
+            $this->layoutPath = $this->applicationPath . DIRECTORY_SEPARATOR . self::LAYOUT_PATH .DIRECTORY_SEPARATOR;
+        }
+        
+        if(isset($config["defaultController"]) and !empty($config["defaultController"])){
+            $this->defaultController = $config["defaultController"];   
+        }
+        
+        if(isset($config["defaultAction"]) and !empty($config["defaultAction"])){
+            $this->defaultAction = $config["defaultAction"];   
+        }
+	}
+	private function checkOptions(){
+		
 	}
 	public function __destruct(){
 
@@ -75,25 +91,27 @@ class Application{
 	public function run(){
 
 		$pathUrl = $this->getPathUrl();
-
+        
 		$url = $this->urlMapping->find($pathUrl);
 		if(!$url) $url = $pathUrl;
-
+        
 		$urltype = isset($this->config['urltype']) ? $this->config['urltype'] : 'path';
 		$urlParse = UrlParseFactory::factory($urltype,$url);
 		$this->delegate($urlParse);
 	}
 	private function getPathUrl(){
-		return (isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '') . (isset($_SERVER['QUERY_STRING']) ? '?'.$_SERVER['QUERY_STRING'] : '');
+		return (isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '') . (isset($_SERVER['QUERY_STRING']) and !empty($_SERVER['QUERY_STRING']) ? '?'.$_SERVER['QUERY_STRING'] : '');
 	}
 	private function delegate($urlParse){
 		$controller = $urlParse->getController();
 		$action = $urlParse->getAction();
-
+        if(empty($controller)) $controller = $this->defaultController;
+        if(empty($action)) $action = $this->defaultAction;
 		try{
 			$controllerObject = $this->loadController($controller);
 			if($controllerObject instanceof Controller){
 				$params = $urlParse->getParam();
+                $controllerObject->__setApp($this);
 				$controllerObject->trigger($action,$controller,$params);
 			}else{
 				throw new NotExtendControllerException($controller);
@@ -106,8 +124,7 @@ class Application{
 
 	}
 	private function getUrlMapping(){
-		$umconfig = $this->loadConfig(self::CFGFILE_URL_MAPPING);
-		return new UrlMapping($umconfig);
+		
 	}
 	private function loadController($controller){
 		if(file_exists($this->controllersPath . $controller . '.php')){
@@ -117,19 +134,10 @@ class Application{
 		}
 		return new $controller($this);
 	}
-	private function loadConfig($file){
-
-		$fullfile = $this->configsPath . $file;
-		if(file_exists($fullfile)){
-			return include($fullfile);
-		}else{
-			return array();
-		}
-	}
-	private function getApplicationConfig(){
-		return $this->loadConfig(self::CFGFILE_APPLICATION);
-	}
-	public function getViewPath(){
-		return $this->viewsPath;
-	}
+    public function getViewPath(){
+        return $this->viewsPath;
+    }
+    public function getLayoutPath(){
+        return $this->layoutPath;   
+    }
 }

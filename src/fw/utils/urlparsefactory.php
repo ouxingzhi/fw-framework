@@ -76,17 +76,17 @@ class PathUrlParse extends AbstractUrlParse{
 	}
 
 	public function getController(){
-		if(isset($this->info['paths'][$this->controllerIndex])){
+		if(isset($this->info['paths'][$this->controllerIndex]) and !empty($this->info['paths'][$this->controllerIndex])){
 			return $this->info['paths'][$this->controllerIndex];
 		}else{
-			return 'index';
+			return null;
 		}
 	}
 	public function getAction(){
-		if(isset($this->info['paths'][$this->actionIndex])){
+		if(isset($this->info['paths'][$this->actionIndex]) and !empty($this->info['paths'][$this->actionIndex])){
 			return $this->info['paths'][$this->actionIndex];
 		}else{
-			return 'index';
+			return null;
 		}
 	}
 	public function getParam(){
@@ -107,14 +107,14 @@ class QueryUrlParse extends AbstractUrlParse{
 		if(isset($this->info['querys'][$this->controllerKey])){
 			return $this->info['querys'][$this->controllerKey];
 		}else{
-			return 'index';
+			return null;
 		}
 	}
 	public function getAction(){
 		if(isset($this->info['querys'][$this->actionKey])){
 			return $this->info['querys'][$this->actionKey];
 		}else{
-			return 'index';
+			return null;
 		}
 	}
 	public function getParam(){
