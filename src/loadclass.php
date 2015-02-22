@@ -17,7 +17,7 @@
 			$realpath = realpath($path);
 			if(array_search($realpath,self::$includePaths) === false){
 				if(file_exists($realpath)){
-					set_include_path($realpath);
+					set_include_path(get_include_path() . PATH_SEPARATOR . $realpath);
 					self::$includePaths[] = $realpath;
 				}else{
 					throw new Execption("\"$realpath\" is not exist");

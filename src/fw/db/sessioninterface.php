@@ -10,6 +10,8 @@ interface SessionInterface{
 	public function isOpen();
 
 	public function query($querystr);
+    
+    public function countQuery($querystr);
 
 	public function getLastInsertId();
 }

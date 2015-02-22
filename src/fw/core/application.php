@@ -4,9 +4,7 @@ namespace Fw\Core;
 use Fw\Utils\UrlMapping;
 use Fw\Core\Controller;
 use Fw\Utils\UrlParseFactory;
-use Fw\Exception\NotDefinedMethodException;
-use Fw\Exception\NotFoundControllerException;
-use Fw\Exception\NotExtendControllerException;
+use Fw\Core\FwException;
 use Fw\Config\Config;
 
 /**
@@ -91,7 +89,6 @@ class Application{
 	public function run(){
 
 		$pathUrl = $this->getPathUrl();
-        
 		$url = $this->urlMapping->find($pathUrl);
 		if(!$url) $url = $pathUrl;
         
@@ -106,20 +103,25 @@ class Application{
 		$controller = $urlParse->getController();
 		$action = $urlParse->getAction();
         if(empty($controller)) $controller = $this->defaultController;
-        if(empty($action)) $action = $this->defaultAction;
+        
 		try{
 			$controllerObject = $this->loadController($controller);
+            
 			if($controllerObject instanceof Controller){
+                if(empty($action)){
+                    $action = $controllerObject->getDefaultAction();
+                    if(!$action){
+                        $action = $this->defaultAction;
+                    }
+                }
 				$params = $urlParse->getParam();
                 $controllerObject->__setApp($this);
 				$controllerObject->trigger($action,$controller,$params);
 			}else{
-				throw new NotExtendControllerException($controller);
+				throw new FwException("not extend controller `$controller`!",2);
 			}
-		}catch(NotFoundControllerException $e){
+		}catch(FwException $e){
 			
-		}catch(NotDefinedMethodException $e){
-
 		}
 
 	}
@@ -130,7 +132,7 @@ class Application{
 		if(file_exists($this->controllersPath . $controller . '.php')){
 			include($this->controllersPath . $controller . '.php');
 		}else{
-			throw new NotFoundControllerException($controller);
+			throw new FwException("not found controller `$controller`",1);
 		}
 		return new $controller($this);
 	}

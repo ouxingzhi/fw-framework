@@ -18,7 +18,7 @@ class UrlMapping{
 	public function find($url){
 		if(!is_array($this->urlMapping)) return null;
 		foreach($this->urlMapping as $key=>$val){
-			if($url = $this->match($url,$key,$val)) return $url;
+			if($u = $this->match($url,$key,$val)) return $u;
 		}
 		return null;
 	}
@@ -31,7 +31,6 @@ class UrlMapping{
 	 */
 	function match($url,$match,$dest){
 		$rmatch = '/.*' . $match . '.*/im';
-
 		if(preg_match($rmatch,$url)){
 			if(preg_match($this->nativeFields,$dest)){
 				$urlmodule = parse_url($url);

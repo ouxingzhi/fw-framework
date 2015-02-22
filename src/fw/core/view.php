@@ -16,8 +16,8 @@ class View{
 	public function assign($key,$val){
 		$this->template->assign($key,$val);
 	}
-    public function get($key){
-        return $this->template->get($key);   
+    public function get($key,$def=null){
+        return $this->template->get($key,$def);   
     }
 	public function write($file,$layout){
         if(empty($layout)){

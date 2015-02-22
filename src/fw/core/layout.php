@@ -3,7 +3,7 @@
 namespace Fw\Core;
 
 use Fw\Utils\ArrayUtils;
-use Fw\Exception\NotFoundViewFileException;
+use Fw\Core\FwException;
 
 class Layout{
     const DEFAULT_LAYOUT = 'layout.php';
@@ -22,18 +22,21 @@ class Layout{
     }
     public function output($file){
         if(file_exists($this->__layoutPath__ . $file)){
-            //extract($this->__viewdata__);
+            extract($this->__template__->getViewData());
 			include($this->__layoutPath__ . $file);
 		}else{
-			throw new NotFoundViewFileException($file);
+			throw new FwException("not found layout `$file`!",4);
 		}
     }
     public function assign($key,$val){
         $this->__template__->assign($key,$val);
 	}
-	public function get($key){
-		return $this->__template__->get($key);
+	public function get($key,$def=null){
+		return $this->__template__->get($key,$def);
 	}
+    public function g($key,$def=''){
+        return $this->get($key,$def);   
+    }
 
 	public function insert($file){
 		$this->__template__->insert($file);

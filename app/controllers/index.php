@@ -9,7 +9,7 @@ class Index extends Controller{
 	public function indexAction($p1=0,$p2=0){
 	
 		return array(
-            'layout'=>'layout2.php'
+            'layout'=>'layout.php'
         );
 	}
 }

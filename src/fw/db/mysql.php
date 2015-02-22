@@ -4,7 +4,6 @@ namespace Fw\Db;
 
 use Fw\Db\SessionInterface;
 use Fw\Core\FwException;
-use Fw\Exception\ParamNotExsistException;
 
 class Mysql implements SessionInterface{
 
@@ -48,7 +47,7 @@ class Mysql implements SessionInterface{
 		if(isset($options['host'])){
 			$this->host = $options['host'];
 		}else{
-			throw new ParamNotExsistException('database.host');
+			throw new FwException("param not exists `database.host`");
 		}
 		if(isset($options['port'])){
 			$this->port = $options['port'];
@@ -56,7 +55,7 @@ class Mysql implements SessionInterface{
 		if(isset($options['user'])){
 			$this->user = $options['user'];
 		}else{
-			throw new ParamNotExsistException('database.user');
+			throw new FwException("param not exists `database.user`");
 		}
 		if(isset($options['password'])){
 			$this->password = $options['password'];
@@ -64,7 +63,7 @@ class Mysql implements SessionInterface{
 		if(isset($options['database'])){
 			$this->database = $options['database'];
 		}else{
-			throw new ParamNotExsistException('database.database');
+			throw new FwException("param not exists `database.database`");
 		}
 	}
 
@@ -105,14 +104,22 @@ class Mysql implements SessionInterface{
 		$result = false;
 		if(is_resource($resource)){
 			$result = array();
-			while($row = mysql_fetch_array($resource)){
+			while($row = mysql_fetch_assoc($resource)){
 				$result[] = $row;
 			}
 		}
 		return $result;
 	}
+    public function countQuery($query){
+        $this->open();
+		$resource = mysql_query($query,$this->link);
+        if($resource){
+            return mysql_num_rows($resource);
+        }
+        return 0;
+    }
 	public function getLastInsertId(){
-		return mysql_insert_id();
+		return mysql_insert_id($this->link);
 	}
 	public static function getInstance($options){
 		if(static::$instance){

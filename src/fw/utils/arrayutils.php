@@ -3,34 +3,12 @@
 namespace Fw\Utils;
 
 class ArrayUtils{
-    private static function setVal(&$obj,&$key,&$val){
-        if(is_object($obj)){
-            $obj->$key = $val;
-        }else if(is_array($obj)){
-            $obj[$key] = $val;
-        }
-    }
-    private static function getVal(&$obj,&$key){
-        if(is_object($obj)){
-            return $obj->$key;
-        }else if(is_array($obj)){
-            return $obj[$key];
-        }
-    }
-    private static function hasVal(&$obj,&$key){
-        if(empty($obj)) return false;
-        if(is_object($obj)){
-            return isset($obj->$key);
-        }else if(is_array($obj)){
-            return isset($obj[$key]);   
-        }
-        return false;
-    }
-	public static function getPath(&$array,$path){
+
+	public static function getPath(&$array,$path,$def=null){
 		$paths = explode('.',$path);
 		$obj = &$array;
 		foreach($paths as $key=>$p){
-            if(!$obj) return null;
+            if(!$obj) return $def;
 			if(is_array($obj)){
                 $obj = &$obj[$p];
             }else if(is_object($obj)){

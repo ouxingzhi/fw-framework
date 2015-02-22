@@ -16,7 +16,9 @@ class SqlBuild{
 		$fieldsstr = '*';
 		if(is_array($fields) and !empty($fileds)){
 			$fieldsstr = implode(',',$fields);
-		}
+		}elseif(is_string($fields) and !empty($fileds)){
+            $fieldsstr = $fields;
+        }
 		$this->builds[] = "SELECT " . $fieldsstr;
 		return $this;
 	}
@@ -37,7 +39,7 @@ class SqlBuild{
 		return $this;
 	}
 	public function limit($limit){
-		$this->builds[] = "ORDER BY $limit";
+		$this->builds[] = "LIMIT $limit";
 		return $this;
 	}
 	public function delete($table){
@@ -50,10 +52,14 @@ class SqlBuild{
 		$this->builds[] = "INSERT INTO `$table`";
 		return $this;
 	}
-	public function values($values){
+	public function set($values){
 		$this->builds[] = "SET $values ";
 		return $this;
 	}
+    public function values($keys,$values){
+        $this->builds[] = "$keys VALUES $values";
+        return $this;
+    }
 	public function update($table){
 		$this->clean();
 		$this->builds[] = "UPDATE $table";
