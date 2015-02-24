@@ -47,11 +47,13 @@ abstract class Table{
         $sql = new SqlBuild();
         $sql->insert($this->getTable());
         if(!empty($keys)){
-            $sql->values($keys,$values);
+            $info = static::buildSqlValues($keys,$values);
+            $sql->values($info['key'],$info['value']);
         }else{
-            $sql->set($values);
+            $sql->set(static::buildSqlSets($values));
         }
         $this->last_sql = $sql->build();
+        
         $db = $this->getDbSession();
         $db->query($this->last_sql);
     }
@@ -68,8 +70,8 @@ abstract class Table{
     public function update($values,$wheres){
         $sql = new SqlBuild();
         $sql->update($this->getTable())
-            ->set($values)
-            ->where($wheres);
+            ->set(static::buildSqlSets($values))
+            ->where(static::buildSqlConds($wheres));
         $this->last_sql = $sql->build();
         $db = $this->getDbSession();
 		$db->query($this->last_sql);
@@ -154,22 +156,24 @@ abstract class Table{
     }
 
 	public function buildSqlValuesSetString(){
-		$values = array();
+		return $this->buildSqlSets($this->data);
+	}
+    public function buildSqlSets($sets=array()){
+        $values = array();
 		$schema = $this->getSchema();
 		$fields = $schema[static::__FIELD];
 		foreach($fields as $field=>$define){
 			$def = explode('|',$define);
 			$type = strtolower($def[0]);
 			$defval = isset($def[1]) ? strtolower($def[1]) : null;
-			if(isset($this->data[$field])){
-				$values[] = static::buildSqlValueItem($field,$this->data[$field],$type);
+			if(isset($sets[$field])){
+				$values[] = static::buildSqlValueItem($field,$sets[$field],$type);
 			}else if($defval){
 				$values[] = static::buildSqlDefaultValue($field,$type,$defval);
 			}
 		}
 		return implode(',',$values);
-	}
-
+    }
 	public static function buildSqlConds($where){
 		$builds = array();
 		foreach($where as $key=>$val){
@@ -190,19 +194,19 @@ abstract class Table{
 		switch($type){
 			
 			case static::TYPE_STRING:
-				$str = "\"" . $value . "\"";
+				$str = "\"" . mysql_real_escape_string($value) . "\"";
 				break;
 			case static::TYPE_DATE:
 			case static::TYPE_DATETIME:
 				if(gettype($value) === 'integer'){
 					$str = "\"" . date($type === static::TYPE_DATE ? 'Y-m-d' : 'Y-m-d h:i:s',$value) ."\"";
 				}else{
-					$str = "\"" . $value . "\"";
+					$str = "\"" . mysql_real_escape_string($value) . "\"";
 				}
 				break;
 			case static::TYPE_INT:
 			default:
-				$str = $value;
+				$str = mysql_real_escape_string($value);
 				break;
 		}
 		return '`' . $field . '`' . '=' . $str;

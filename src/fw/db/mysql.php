@@ -17,7 +17,7 @@ class Mysql implements SessionInterface{
 
 	private $database;
 
-
+    private $charset = 'utf8';
 
 	private $link;
 
@@ -65,6 +65,9 @@ class Mysql implements SessionInterface{
 		}else{
 			throw new FwException("param not exists `database.database`");
 		}
+        if(isset($options['charset'])){
+			$this->charset = $options['charset'];
+		}
 	}
 
 	public function open(){
@@ -75,6 +78,8 @@ class Mysql implements SessionInterface{
 			throw new FwException(mysql_error(),3389);
 		}
 		mysql_select_db($this->database,$this->link);
+        mysql_set_charset($this->charset,$this->link);
+        mysql_query('SET NAMES ' . $this->charset,$this->link);
 		$this->state = static::STATE_CONNECT;
 		return $this;
 	}

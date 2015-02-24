@@ -50,7 +50,7 @@ abstract class Model{
 		return $this;
 	}
 	public function update(){
-        
+        $pk = $this->getPk();
         $pkval = $this->getPkVal();
         if(empty($pkval)){
             throw new FwException("not setting pk!",21);
