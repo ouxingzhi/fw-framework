@@ -167,12 +167,13 @@ abstract class Table{
 			$type = strtolower($def[0]);
 			$defval = isset($def[1]) ? strtolower($def[1]) : null;
 
-			if(isset($sets[$field]) and $sets[$field]){
+			if(isset($sets[$field])){
 				$values[] = static::buildSqlValueItem($field,$sets[$field],$type,$defval);
 			}else if($defval){
 				$values[] = static::buildSqlDefaultValue($field,$type,$defval);
 			}
 		}
+
 		return implode(',',$values);
     }
 	public static function buildSqlConds($where){
