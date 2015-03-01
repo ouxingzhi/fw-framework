@@ -109,7 +109,7 @@ class Application{
             
 			if($controllerObject instanceof Controller){
                 if(empty($action)){
-                    $action = $controllerObject->getDefaultAction();
+                    $action = $controllerObject->__getDefaultActionName();
                     if(!$action){
                         $action = $this->defaultAction;
                     }

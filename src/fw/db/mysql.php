@@ -101,7 +101,7 @@ class Mysql implements SessionInterface{
 			if(!$resource){
 				$error = mysql_error();
 				if($error){
-					throw new FwException($error,3388);
+					throw new FwException($error.'<br /><br />SQL : '.$query,3388);
 				}
 			}
 			return $resource;

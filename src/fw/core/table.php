@@ -166,8 +166,9 @@ abstract class Table{
 			$def = explode('|',$define);
 			$type = strtolower($def[0]);
 			$defval = isset($def[1]) ? strtolower($def[1]) : null;
-			if(isset($sets[$field])){
-				$values[] = static::buildSqlValueItem($field,$sets[$field],$type);
+
+			if(isset($sets[$field]) and $sets[$field]){
+				$values[] = static::buildSqlValueItem($field,$sets[$field],$type,$defval);
 			}else if($defval){
 				$values[] = static::buildSqlDefaultValue($field,$type,$defval);
 			}
@@ -192,10 +193,6 @@ abstract class Table{
 	private static function buildSqlValueItem($field,$value,$type){
 
 		switch($type){
-			
-			case static::TYPE_STRING:
-				$str = "\"" . mysql_real_escape_string($value) . "\"";
-				break;
 			case static::TYPE_DATE:
 			case static::TYPE_DATETIME:
 				if(gettype($value) === 'integer'){
@@ -204,9 +201,9 @@ abstract class Table{
 					$str = "\"" . mysql_real_escape_string($value) . "\"";
 				}
 				break;
-			case static::TYPE_INT:
+			
 			default:
-				$str = mysql_real_escape_string($value);
+				$str = "\"" . mysql_real_escape_string($value) . "\"";
 				break;
 		}
 		return '`' . $field . '`' . '=' . $str;
@@ -229,15 +226,12 @@ abstract class Table{
 		$reg = '/^([a-z]\w+)\(([^\(\)]*)\)$/im';
 		$fnname = null;
 		$fnparam = null;
-		if(!preg_match($reg,$defval,$matchs)){
+		if(preg_match($reg,$defval,$matchs)){
 			$fnname = $matchs[1];
 			$fnparam = $matchs[2];
 		}
 		switch($type){
 			
-			case static::TYPE_STRING:
-				$str = "\"" . $value . "\"";
-				break;
 			case static::TYPE_DATE:
 				$str = $fnname ? static::datefilter($fnname,$fnparam) : "\"$defval\"";
 				break;
@@ -246,7 +240,7 @@ abstract class Table{
 				break;
 			case static::TYPE_INT:
 			default:
-				$str = $value;
+				$str = "\"" . ($fnname ? $fnparam : $defval) . "\"";
 				break;
 		}
 		return '`' . $field . '`' . '=' . $str;

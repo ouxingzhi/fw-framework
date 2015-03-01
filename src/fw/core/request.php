@@ -4,6 +4,10 @@ namespace Fw\Core;
 
 class Request{
     
+    public function url(){
+        return $_SERVER['REQUEST_URI'];
+    }
+    
     public function get($key,$def=null){
         return isset($_GET[$key]) ? $_GET[$key] : $def;
     }
