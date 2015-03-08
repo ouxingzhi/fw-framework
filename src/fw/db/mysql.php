@@ -4,6 +4,7 @@ namespace Fw\Db;
 
 use Fw\Db\SessionInterface;
 use Fw\Core\FwException;
+use Fw\Utils\LogCache;
 
 class Mysql implements SessionInterface{
 
@@ -104,8 +105,11 @@ class Mysql implements SessionInterface{
 					throw new FwException($error.'<br /><br />SQL : '.$query,3388);
 				}
 			}
+            LogCache::log('SQL' , $query); 
 			return $resource;
-		}
+		}else{
+            LogCache::log('SQL' , $query);  
+        }
 		$result = false;
 		if(is_resource($resource)){
 			$result = array();
@@ -118,6 +122,18 @@ class Mysql implements SessionInterface{
     public function countQuery($query){
         $this->open();
 		$resource = mysql_query($query,$this->link);
+        if(is_bool($resource)){
+			if(!$resource){
+				$error = mysql_error();
+				if($error){
+					throw new FwException($error.'<br /><br />SQL : '.$query,3388);
+				}
+			}
+            LogCache::log('SQL' , $query); 
+			return 1;
+		}else{
+            LogCache::log('SQL', $query);  
+        }
         if($resource){
             return mysql_num_rows($resource);
         }

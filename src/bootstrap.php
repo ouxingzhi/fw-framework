@@ -1,5 +1,7 @@
 <?php
 
+    define('FW',true);
+
 	define('FW_LIBRARY_PATH',__DIR__);
 
 

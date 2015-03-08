@@ -8,6 +8,7 @@ use Fw\Core\FwException;
 use Fw\Core\Request;
 use Fw\Core\Response;
 use Fw\Core\Session;
+use Fw\Utils\LogCache;
 
 /**
  * Controller基类
@@ -40,9 +41,11 @@ class Controller{
         if($isSimpleMode){
             $method = $this->__handleRequestName();
             $paths = array_splice($paths,1);
+            LogCache::log('simple mode','true');
         }else{
             $method = $action . self::SUFFIX;
             $paths = array_splice($paths,2);
+            LogCache::log('simple mode','false');
         }
 		
 		
@@ -51,9 +54,9 @@ class Controller{
             if($this->__before($controller,$action)){
                 return;   
             }
-            
+            LogCache::log('action name' , $method);
             $pageinfo = call_user_func_array(array($this,$method),$paths);
-            
+            $this->__afterCall($controller,$action);
             if(!empty($pageinfo)){
                 
                 if(is_bool($pageinfo)){
@@ -134,8 +137,12 @@ class Controller{
     protected function __before($controller,$action){
         
     }
-    //钩子方法，在action方法或是handleRequest方法执行完后执行
+    //钩子方法，在页面渲染完后执行
     protected function __after($controller,$action){
+        
+    }
+    //钩子方法，在action执行之后执行
+    protected function __afterCall($controller,$action){
         
     }
     //钩子方法，controller子类可以通过重写此方法来设置为simple模式
@@ -156,5 +163,4 @@ class Controller{
     protected function handleRequest(){
         throw new FwException("not override method `handleRequest`!",3);
     }
-    
 }

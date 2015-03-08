@@ -4,6 +4,7 @@ namespace Fw\Core;
 
 use Fw\Core\Template;
 use Fw\Core\Layout;
+use Fw\Utils\LogCache;
 
 
 class View{
@@ -37,5 +38,23 @@ class View{
     }
     public function getLayout(){
         return $this->layout;   
+    }
+    public function writeLog(){
+        $logs = LogCache::getCache();
+        $html = array();
+        $html[] = '<table width="100%" border="1" cellpadding="0" cellspacing="0">';
+        $html[] = '<tr><th colspan="2"><h2>debuger</h2></th></tr>';
+        foreach($logs as $key=>$list){
+            $html[] = '<tr>';
+            $html[] = '<th align="left">'.(empty($key) ? 'default' : $key ).'</th>';
+            $html[] = '<td>';
+            foreach($list as $i=>$msg){
+                $html[] = '<p>' . $msg . '</p>';
+            }
+            $html[] = '</td>';
+            $html[] = '</tr>';
+        }
+        $html[] = '</table>';
+        echo implode('',$html);
     }
 }

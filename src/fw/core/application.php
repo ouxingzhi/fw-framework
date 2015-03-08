@@ -6,6 +6,7 @@ use Fw\Core\Controller;
 use Fw\Utils\UrlParseFactory;
 use Fw\Core\FwException;
 use Fw\Config\Config;
+use Fw\Utils\LogCache;
 
 /**
  * Application类
@@ -38,6 +39,8 @@ class Application{
     private $defaultAction = 'index';
 
 	private $configsPath;
+    
+    private $debug = false;
     
 
 	public function __construct($config){
@@ -79,6 +82,10 @@ class Application{
         if(isset($config["defaultAction"]) and !empty($config["defaultAction"])){
             $this->defaultAction = $config["defaultAction"];   
         }
+        
+        if(isset($config["debug"]) and !empty($config["debug"])){
+            $this->debug = $config["debug"];   
+        }
 	}
 	private function checkOptions(){
 		
@@ -89,9 +96,10 @@ class Application{
 	public function run(){
 
 		$pathUrl = $this->getPathUrl();
+        LogCache::log('real url' , $pathUrl);
 		$url = $this->urlMapping->find($pathUrl);
 		if(!$url) $url = $pathUrl;
-        
+        LogCache::log('change url' , $url);
 		$urltype = isset($this->config['urltype']) ? $this->config['urltype'] : 'path';
 		$urlParse = UrlParseFactory::factory($urltype,$url);
 		$this->delegate($urlParse);
@@ -108,6 +116,7 @@ class Application{
 			$controllerObject = $this->loadController($controller);
             
 			if($controllerObject instanceof Controller){
+                LogCache::log('controller name' , $controller);
                 if(empty($action)){
                     $action = $controllerObject->__getDefaultActionName();
                     if(!$action){
